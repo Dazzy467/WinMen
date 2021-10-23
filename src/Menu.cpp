@@ -1,3 +1,4 @@
+
 #include "Menu.h"
 
 Menu::Menu()
@@ -9,6 +10,7 @@ Menu::Menu()
     attr = Menu::Attribute::A_ARROW;
     tempX = 0;
     tempY = 0;
+    isRun = true;
 }
 Menu::~Menu()
 {
@@ -17,6 +19,7 @@ Menu::~Menu()
 void Menu::draw()
 {
     pos.Y = tempY;
+    pos.X = tempX;
     for (size_t i = 0; i < menu_container.size(); i++)
     {
         pos.Y++;
@@ -30,7 +33,7 @@ void Menu::draw()
                 std::cout << "->";
             else
                 std::cout << "\0";
-            std::cout << menu_container.at(i) << "  ";   /// Add extra whitespace to clear the weirdness
+            std::cout << menu_container.at(i) << "  "; /// Add extra whitespace to clear the weirdness
             break;
         case Menu::Attribute::A_HIGHLIGHT:
             if (index == i)
@@ -62,6 +65,7 @@ void Menu::SetPosition(short int x, short int y)
     this->pos.X = x;
     this->pos.Y = y;
 
+    tempX = pos.X;
     tempY = pos.Y;
 }
 
@@ -92,7 +96,7 @@ void Menu::selectMenuAttr(Attribute attrb = Menu::Attribute::A_ARROW, WORD dWORD
 
 void Menu::refresh()
 {
-    clearScr();
+    ex_ClearScr();
     draw();
 }
 
@@ -132,11 +136,29 @@ void Menu::clearScr()
     SetConsoleCursorPosition(hOut, topLeft);
 }
 
-//accessor definition
+void Menu::ex_ClearScr()
+{
+    std::cout.flush();
+    pos.Y = tempY;
+    pos.X = tempX;
+    for (size_t i = 0; i < menu_container.size(); i++)
+    {
+        pos.Y++;
+        pos.X = tempX;
+        for (size_t j = 0; j < menu_container[i].length(); j++)
+        {
+            SetConsoleCursorPosition(hndl, pos);
+            std::cout << " ";
+            pos.X++;
+        }
+    }
+}
+
+// accessor definition
 const std::string Menu::CombineToStr()
 {
     std::string temp;
-    for (auto& i : menu_container)
+    for (auto &i : menu_container)
     {
         temp = temp + i + '\n';
     }
