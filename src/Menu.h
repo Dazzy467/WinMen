@@ -9,6 +9,7 @@
 #include <initializer_list>
 #include <climits>
 #include <string>
+#include <conio.h>
 
 /*
 AUTH: DAVID YUSUF DE WASKITO
@@ -46,6 +47,7 @@ public: //method
   void refresh();
   void clearScr();
   void ex_ClearScr();
+  void pause(const std::string& prompt);
 
   //accessor
   void clearContainer() { this->menu_container.clear(); }
@@ -55,6 +57,11 @@ public: //method
   const size_t GetMaxAvailIndex() { return this->menu_container.size() - 1; }
   const bool IsRun() { return this->isRun; }
   void Kill() { this->isRun = false; }
+
+  // Inputting  
+  template <typename T>
+  void InputForm(std::istream &in_stream, const std::string &msg, T &in_var);
+  void InputForm_str(std::istream &in_streams, const std::string &msg, std::string &in_var);
 
   const std::string CombineToStr();
   // in class definition
@@ -70,59 +77,8 @@ public: //method
     index--;
     return *this;
   }
-  // input something other than string using this function
 
-  template <typename T>
-  void InputForm(std::istream &in_stream, const std::string &msg, T &in_var)
-  {
-    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-    clearScr();
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-    std::cout << msg;
-    in_stream >> in_var;
 
-    if (in_stream.fail())
-    {
-      clearScr();
-      in_stream.clear();
-      in_stream.ignore(INT_MAX, '\n');
-      SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-      std::cout << "Input error, tekan apa saja untuk melanjutkan";
-      system("pause>nul");
-      clearScr();
-      draw();
-      return;
-    }
-
-    in_stream.ignore(INT_MAX, '\n');
-    clearScr();
-    draw();
-  }
-
-  void InputForm_str(std::istream &in_streams, const std::string &msg, std::string &in_var)
-  {
-    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-    clearScr();
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-    std::cout << msg;
-    std::getline(in_streams, in_var);
-
-    if (in_streams.fail())
-    {
-      clearScr();
-      in_streams.clear();
-      in_streams.ignore(in_streams.rdbuf()->in_avail());
-      SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-      std::cout << "Input error, tekan apa saja untuk melanjutkan";
-      system("pause>nul");
-      clearScr();
-      draw();
-      return;
-    }
-
-    clearScr();
-    draw();
-  }
 
 private: //variabel
   std::vector<std::string> menu_container;

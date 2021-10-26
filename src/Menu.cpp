@@ -154,6 +154,16 @@ void Menu::ex_ClearScr()
     }
 }
 
+void Menu::pause(const std::string &prompt)
+{
+
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+    std::cout << prompt;
+
+    while (!kbhit())
+        Sleep(80); // <- using this makes the performance worse but it can do the trick
+}
+
 // accessor definition
 const std::string Menu::CombineToStr()
 {
@@ -164,3 +174,59 @@ const std::string Menu::CombineToStr()
     }
     return temp;
 }
+
+template <typename T>
+void Menu::InputForm(std::istream &in_stream, const std::string &msg, T &in_var)
+{
+    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+    clearScr();
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+    std::cout << msg;
+    in_stream >> in_var;
+
+    if (in_stream.fail())
+    {
+        clearScr();
+        in_stream.clear();
+        in_stream.ignore(INT_MAX, '\n');
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+        pause("Input error, tekan apa saja untuk melanjutkan");
+        clearScr();
+        draw();
+        return;
+    }
+
+    in_stream.ignore(INT_MAX, '\n');
+    clearScr();
+    draw();
+}
+
+void Menu::InputForm_str(std::istream &in_streams, const std::string &msg, std::string &in_var)
+{
+    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+    clearScr();
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+    std::cout << msg;
+    std::getline(in_streams, in_var);
+
+    if (in_streams.fail())
+    {
+        clearScr();
+        in_streams.clear();
+        in_streams.ignore(in_streams.rdbuf()->in_avail());
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+        pause("Input error, tekan apa saja untuk melanjutkan");
+        clearScr();
+        draw();
+        return;
+    }
+
+    clearScr();
+    draw();
+}
+
+// Template explicit definiton
+template void Menu::InputForm<int>(std::istream &in_stream, const std::string &msg, int &in_var);
+template void Menu::InputForm<float>(std::istream &in_stream, const std::string &msg, float &in_var);
+template void Menu::InputForm<char>(std::istream &in_stream, const std::string &msg, char &in_var);
+template void Menu::InputForm<double>(std::istream &in_stream, const std::string &msg, double &in_var);
