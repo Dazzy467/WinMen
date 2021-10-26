@@ -100,8 +100,8 @@ int main()
                                                                               logins.clearScr();
                                                                               usr_acc[logins.GetIndex()].Cek();
 
-                                                                              printAt(30, 10, "Tekan apa saja untuk melanjutkan");
-                                                                              system("pause>nul");
+                                                                             
+                                                                             logins.pause("Tekan apa saja untuk melanjutkan");
                                                                               logins.clearScr();
                                                                               logins.Kill();
                                                                               obj_menu.draw();
